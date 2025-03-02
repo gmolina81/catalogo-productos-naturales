@@ -163,9 +163,11 @@
             try {
                 const response = await fetch(sheetUrl);
                 const text = await response.text();
-                
-                // La respuesta viene en un formato especial que necesitamos limpiar
-                const json = JSON.parse(text.substring(47).slice(0, -2));
+        
+                // La respuesta de Google Sheets viene con un prefijo que debemos eliminar
+                // El formato es: "/*O_o*/google.visualization.Query.setResponse(...);"
+                const jsonText = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+                const json = JSON.parse(jsonText);
                 
                 // Extraer datos y convertirlos a un formato más útil
                 productos = json.table.rows.map(row => {
