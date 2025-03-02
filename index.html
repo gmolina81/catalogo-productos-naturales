@@ -113,6 +113,30 @@
             padding: 1rem 0;
             margin-top: 3rem;
         }
+        .producto-imagen-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 75%; /* Proporción 4:3 (cambia a 100% para 1:1 o a 56.25% para 16:9) */
+            overflow: hidden;
+            background-color: #f9f9f9; /* Color de fondo mientras carga la imagen */
+        }
+        
+        .producto img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cubre todo el contenedor manteniendo la proporción */
+            object-position: center; /* Centra la imagen */
+            transition: transform 0.3s ease;
+        }
+        
+        /* Efecto opcional de zoom al pasar el mouse */
+        .producto:hover img {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -230,10 +254,13 @@
             productosAMostrar.forEach(producto => {
                 html += `
                     <div class="producto">
-                        <img src="${producto.imagen}" alt="${producto.nombre}">
+                        <div class="producto-imagen-container">
+                            <img src="${producto.imagen}" alt="${producto.nombre}">
+                        </div>
                         <div class="producto-info">
                             <span class="producto-categoria">${producto.categoria}</span>
                             <h3 class="producto-nombre">${producto.nombre}</h3>
+                            <p class="producto-descripcion">${producto.descripcion}</p>
                             <p class="producto-precio">$${producto.precio}</p>
                         </div>
                     </div>
