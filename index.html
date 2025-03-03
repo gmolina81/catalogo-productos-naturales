@@ -303,7 +303,7 @@
                         <div class="producto-info">
                             <span class="producto-categoria">${producto.categoria}</span>
                             <h3 class="producto-nombre">${producto.nombre}</h3>
-                            <p class="producto-precio">$${parseFloat(producto.precio).toFixed(2)}</p>
+                            <p class="producto-precio">$${formatearPrecio(producto.precio)}</p>
                         </div>
                     </div>
                 `;
@@ -335,6 +335,12 @@
             }
             
             mostrarProductos(productosFiltrados);
+        }
+
+        // Function para formatear precios
+        function formatearPrecio(precio) {
+            const num = parseFloat(precio);
+            return num % 1 === 0 ? num.toFixed(0) : num.toFixed(2);
         }
         
         // Cargar los productos al iniciar la página
