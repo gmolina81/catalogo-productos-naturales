@@ -303,7 +303,7 @@
                         <div class="producto-info">
                             <span class="producto-categoria">${producto.categoria}</span>
                             <h3 class="producto-nombre">${producto.nombre}</h3>
-                            <p class="producto-precio">$${producto.precio}</p>
+                            <p class="producto-precio">$${parseFloat(producto.precio).toFixed(2)}</p>
                         </div>
                     </div>
                 `;
