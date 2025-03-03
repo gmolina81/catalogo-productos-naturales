@@ -212,7 +212,7 @@
     </footer>
 
     <script>
-        // ID de la hoja de Google Sheets (debes reemplazar esto con tu ID)
+        // ID de la hoja de Google Sheets
         const sheetId = '1No_OxeJh6PaRW4T2t1JbEPf6xqE585pqRPu6N2zUFnM';
         
         // El ID de la hoja se encuentra en la URL de tu Google Sheet:
@@ -238,7 +238,7 @@
                 
                 // Extraer datos y convertirlos a un formato más útil
                 productos = json.table.rows.map(row => {
-                    // Asumimos que tus columnas están en este orden:
+                    // Columnas del Gsheet
                     // ID, Nombre, Categoría, Descripción, Precio, URL de Imagen
                     return {
                         id: row.c[0] ? row.c[0].v : '',
