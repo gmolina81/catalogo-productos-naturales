@@ -674,32 +674,68 @@
             });
             
             contenedor.innerHTML = html;
+		}
+		
+		 // Función para aplicar filtros
+        function aplicarFiltros() {
+            const categoriaSeleccionada = document.getElementById('categoria-filtro').value;
+            const busqueda = document.getElementById('busqueda').value.toLowerCase();
             
-            // Agregar event listeners a los botones de agregar al carrito
-            document.querySelectorAll('.add-to-cart').forEach(button => {
-                button.addEventListener('click', agregarAlCarrito);
-            });
+            let productosFiltrados = productos;
             
-            // Agregar event listeners a los botones de cantidad
-            document.querySelectorAll('.increase-quantity').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    const quantityElement = document.getElementById(`quantity-${id}`);
-                    let quantity = parseInt(quantityElement.textContent);
-                    quantityElement.textContent = quantity + 1;
-                });
-            });
+            // Filtrar por categoría
+            if (categoriaSeleccionada) {
+                productosFiltrados = productosFiltrados.filter(
+                    producto => producto.categoria === categoriaSeleccionada
+                );
+            }
             
-            document.querySelectorAll('.decrease-quantity').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    const quantityElement = document.getElementById(`quantity-${id}`);
-                    let quantity = parseInt(quantityElement.textContent);
-                    if (quantity > 1) {
-                        quantityElement.textContent = quantity - 1;
-                    }
-                });
+            // Filtrar por búsqueda
+            if (busqueda) {
+                productosFiltrados = productosFiltrados.filter(
+                    producto => producto.nombre.toLowerCase().includes(busqueda) || 
+                                producto.descripcion.toLowerCase().includes(busqueda)
+                );
+            }
+				   
+            mostrarProductos(productosFiltrados);
+        }
+
+        // Function para formatear precios
+        function formatearPrecio(precio) {
+            const num = parseFloat(precio);
+            return num % 1 === 0 ? num.toFixed(0) : num.toFixed(2);
+        }
+        
+        // Cargar los productos al iniciar la página
+        window.onload = cargarProductos;									   
+            
+        // Agregar event listeners a los botones de agregar al carrito
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', agregarAlCarrito);
+        });		 
+            
+        // Agregar event listeners a los botones de cantidad
+        document.querySelectorAll('.increase-quantity').forEach(button => {
+            utton.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const quantityElement = document.getElementById(`quantity-${id}`);
+                let quantity = parseInt(quantityElement.textContent);
+                quantityElement.textContent = quantity + 1;
             });
+        });
+            
+        document.querySelectorAll('.decrease-quantity').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const quantityElement = document.getElementById(`quantity-${id}`);
+                let quantity = parseInt(quantityElement.textContent);
+                if (quantity > 1) {
+                   quantityElement.textContent = quantity - 1;
+                }
+            });
+        });
+		
 	</script>
 	<!-- Botón flotante de WhatsApp -->
     <a href="https://wa.me/5491168692888" class="whatsapp-float" target="_blank" title="Contactar por WhatsApp">
