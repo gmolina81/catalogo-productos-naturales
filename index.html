@@ -701,6 +701,29 @@
             mostrarProductos(productosFiltrados);
         }
 
+	// Función para cargar el carrito desde localStorage
+        function cargarCarritoDesdeLocalStorage() {
+            const carritoGuardado = localStorage.getItem('carrito');
+            if (carritoGuardado) {
+                carrito = JSON.parse(carritoGuardado);
+                actualizarContadorCarrito();
+            }
+        }
+
+	// Función para actualizar el contador del carrito
+        function actualizarContadorCarrito() {
+            const contador = document.getElementById('cart-count');
+            const totalItems = carrito.reduce((total, item) => total + item.cantidad, 0);
+            contador.textContent = totalItems;
+            
+            // Si hay items, mostrar el contador
+            if (totalItems > 0) {
+                contador.style.display = 'flex';
+            } else {
+                contador.style.display = 'none';
+            }
+        }
+	    
         // Function para formatear precios
         function formatearPrecio(precio) {
             const num = parseFloat(precio);
