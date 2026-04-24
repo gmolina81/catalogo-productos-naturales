@@ -11,27 +11,9 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    projects: [
-      {
-        extends: true,
-        test: {
-          name: 'unit',
-          environment: 'jsdom',
-          setupFiles: ['./tests/setup.ts'],
-          include: ['tests/unit/**/*.{test,spec}.{ts,tsx}'],
-        },
-      },
-      {
-        extends: true,
-        test: {
-          name: 'integration',
-          environment: 'node',
-          include: ['tests/integration/**/*.{test,spec}.{ts,tsx}'],
-          // Los tests de integración conectan a la DB local levantada con `supabase start`.
-          // En CI, el job se encarga de eso antes de correr este proyecto.
-          testTimeout: 20000,
-        },
-      },
-    ],
+    environment: 'jsdom',
+    setupFiles: ['./tests/setup.ts'],
+    include: ['tests/{unit,integration}/**/*.{test,spec}.{ts,tsx}'],
+    testTimeout: 20000,
   },
 })

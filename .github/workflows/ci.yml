@@ -61,11 +61,19 @@ jobs:
       - name: Start Supabase (local stack)
         run: supabase start
 
-      - name: Export local Supabase keys
+      - name: Export local Supabase keys to env
         run: |
-          supabase status -o env | grep -E '^(API_URL|ANON_KEY|SERVICE_ROLE_KEY)=' >> $GITHUB_ENV
-          echo "VITE_SUPABASE_URL=${API_URL}" >> $GITHUB_ENV
-          echo "VITE_SUPABASE_ANON_KEY=${ANON_KEY}" >> $GITHUB_ENV
+          # supabase status -o env formato: KEY="value". Lo evaluamos en el shell
+          # para tener las vars disponibles y después las reescribimos al
+          # archivo $GITHUB_ENV con los nombres que usa la app (VITE_*).
+          set -a
+          eval "$(supabase status -o env)"
+          set +a
+          {
+            echo "VITE_SUPABASE_URL=${API_URL}"
+            echo "VITE_SUPABASE_ANON_KEY=${ANON_KEY}"
+            echo "SUPABASE_SERVICE_ROLE_KEY=${SERVICE_ROLE_KEY}"
+          } >> "$GITHUB_ENV"
 
       - name: Run RLS tests (pgTAP)
         run: npm run test:rls
@@ -95,12 +103,20 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      # El home smoke test no hace llamadas a Supabase, pero el módulo
+      # src/lib/supabase.ts igual valida env vars al primer acceso.
+      # Inyectamos valores dummy para que el build y el dev server arranquen.
       - name: Build
+        env:
+          VITE_SUPABASE_URL: https://dummy.supabase.co
+          VITE_SUPABASE_ANON_KEY: dummy-anon-key
         run: npm run build
 
       - name: Run E2E tests
         env:
           CI: true
+          VITE_SUPABASE_URL: https://dummy.supabase.co
+          VITE_SUPABASE_ANON_KEY: dummy-anon-key
         run: npm run test:e2e
 
       - name: Upload Playwright report

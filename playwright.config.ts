@@ -16,12 +16,12 @@ export default defineConfig({
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
     { name: 'mobile-chrome', use: { ...devices['Pixel 7'] } },
   ],
-  webServer: process.env.CI
-    ? undefined
-    : {
-        command: 'npm run dev',
-        url: 'http://localhost:5173',
-        reuseExistingServer: true,
-        timeout: 60000,
-      },
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:5173',
+    // Local: reusar el dev server si ya está corriendo.
+    // CI: arranca uno limpio cada vez.
+    reuseExistingServer: !process.env.CI,
+    timeout: 60000,
+  },
 })

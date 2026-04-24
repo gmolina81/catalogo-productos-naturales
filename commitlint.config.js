@@ -20,6 +20,7 @@ export default {
         'docs',
         'tests',
         'deps',
+        'lib',
       ],
     ],
     'body-max-line-length': [1, 'always', 120],

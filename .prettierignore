@@ -8,3 +8,8 @@ test-results
 supabase/.branches
 supabase/.temp
 package-lock.json
+
+# Prettier no tiene parser para SQL y falla en --check sobre migrations/tests.
+*.sql
+# ni para TOML.
+*.toml
