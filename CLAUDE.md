@@ -84,18 +84,18 @@ mm-vida-saludable/
 
 ## 3. Stack y versiones
 
-| Capa | Tecnología | Notas |
-|------|------------|-------|
-| Frontend | HTML5 + CSS + JavaScript (ES2022+) | Posible migración a TypeScript/React documentada en ADR cuando el admin lo amerite. |
-| Base de datos | PostgreSQL (Supabase) | Migraciones versionadas con Supabase CLI. |
-| Auth | Supabase Auth | Email + contraseña en v1. MFA a definir (ver SPEC §9). |
-| Serverless | Vercel Functions (Node.js LTS) | Solo para operaciones que requieren `service_role` key. |
-| Tests unit/integ | Vitest | Mismo runner para lógica pura y llamadas al cliente. |
-| Tests E2E | Playwright | Flujos críticos: checkout, login admin, gestión de pedidos. |
-| Tests DB | pgTAP | RLS y triggers se testean en la base, no desde JS. |
-| Lint/Format | ESLint + Prettier | Config en `eslint.config.js` y `.prettierrc`. |
-| Commits | Conventional Commits | Validados con commitlint en pre-commit. |
-| CI | GitHub Actions | Pipeline obligatorio antes de merge. |
+| Capa             | Tecnología                         | Notas                                                                               |
+| ---------------- | ---------------------------------- | ----------------------------------------------------------------------------------- |
+| Frontend         | HTML5 + CSS + JavaScript (ES2022+) | Posible migración a TypeScript/React documentada en ADR cuando el admin lo amerite. |
+| Base de datos    | PostgreSQL (Supabase)              | Migraciones versionadas con Supabase CLI.                                           |
+| Auth             | Supabase Auth                      | Email + contraseña en v1. MFA a definir (ver SPEC §9).                              |
+| Serverless       | Vercel Functions (Node.js LTS)     | Solo para operaciones que requieren `service_role` key.                             |
+| Tests unit/integ | Vitest                             | Mismo runner para lógica pura y llamadas al cliente.                                |
+| Tests E2E        | Playwright                         | Flujos críticos: checkout, login admin, gestión de pedidos.                         |
+| Tests DB         | pgTAP                              | RLS y triggers se testean en la base, no desde JS.                                  |
+| Lint/Format      | ESLint + Prettier                  | Config en `eslint.config.js` y `.prettierrc`.                                       |
+| Commits          | Conventional Commits               | Validados con commitlint en pre-commit.                                             |
+| CI               | GitHub Actions                     | Pipeline obligatorio antes de merge.                                                |
 
 Versiones de Node y npm se fijan en `.nvmrc` y `package.json` (`"engines"`).
 Dependencias con versiones fijas en `package.json`; el `package-lock.json`
@@ -112,19 +112,20 @@ Frontend y serverless funcionan distinto; cada uno tiene su regla.
 Logging estructurado en JSON. Vercel captura `stdout` y lo indexa.
 
 ```js
-import { logger } from '../src/lib/logger.js';
+import { logger } from '../src/lib/logger.js'
 
-logger.info('sync_started', { provider_id });
+logger.info('sync_started', { provider_id })
 try {
   // ...
-  logger.info('sync_completed', { provider_id, changes });
+  logger.info('sync_completed', { provider_id, changes })
 } catch (err) {
-  logger.error('sync_failed', { provider_id, error: err.message, stack: err.stack });
-  throw err;
+  logger.error('sync_failed', { provider_id, error: err.message, stack: err.stack })
+  throw err
 }
 ```
 
 Reglas:
+
 - `logger.info` para inicio/fin de operación y métricas (conteos, duraciones).
 - `logger.warn` para anomalías recuperables.
 - `logger.error` con `stack` completo para errores.
@@ -153,10 +154,10 @@ Reglas:
 ```js
 function propagarNuevoCosto(idProductoProveedor, nuevoPrecio) {
   if (!idProductoProveedor) {
-    throw new Error('idProductoProveedor es requerido');
+    throw new Error('idProductoProveedor es requerido')
   }
   if (typeof nuevoPrecio !== 'number' || nuevoPrecio < 0) {
-    throw new Error(`nuevoPrecio inválido: ${nuevoPrecio}`);
+    throw new Error(`nuevoPrecio inválido: ${nuevoPrecio}`)
   }
   // ...
 }
@@ -563,6 +564,6 @@ obvio.
 
 ## Historial de cambios
 
-| Versión | Fecha | Cambios |
-|---------|-------|---------|
-| 1.0 | 2026-04-23 | Adaptación inicial desde CLAUDE.md global de data engineering a proyecto full-stack web (Supabase + HTML/JS + Vercel). Incorpora SDD, TDD con pirámide unit/integration/E2E, testing de RLS con pgTAP, Conventional Commits, seguridad operativa, accesibilidad y ADRs. |
+| Versión | Fecha      | Cambios                                                                                                                                                                                                                                                                 |
+| ------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0     | 2026-04-23 | Adaptación inicial desde CLAUDE.md global de data engineering a proyecto full-stack web (Supabase + HTML/JS + Vercel). Incorpora SDD, TDD con pirámide unit/integration/E2E, testing de RLS con pgTAP, Conventional Commits, seguridad operativa, accesibilidad y ADRs. |
