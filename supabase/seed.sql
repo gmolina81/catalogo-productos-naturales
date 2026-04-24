@@ -1,0 +1,3 @@
+-- Seed para desarrollo local.
+-- Se ejecuta después de todas las migraciones cuando corrés `supabase db reset`.
+-- NO incluir datos reales del negocio acá; solo fixtures estables para tests manuales.

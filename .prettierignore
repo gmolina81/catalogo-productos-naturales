@@ -1,0 +1,10 @@
+dist
+legacy
+node_modules
+coverage
+playwright-report
+test-results
+.vercel
+supabase/.branches
+supabase/.temp
+package-lock.json
