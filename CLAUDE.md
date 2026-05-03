@@ -1,9 +1,10 @@
 # CLAUDE.md — Estándares de Codificación del Proyecto
 
 Este archivo define los estándares de desarrollo para **M&M Vida Saludable** —
-una aplicación web full-stack compuesta por base de datos (Supabase/Postgres),
-backend (API REST de Supabase + funciones serverless en Vercel) y frontend
-(HTML/CSS/JS, eventualmente TypeScript/React).
+una aplicación web full-stack compuesta por base de datos (PostgreSQL),
+backend (Supabase stack autohosteado: PostgREST + GoTrue) y frontend
+(Vite + React + TypeScript). El stack corre 100% local en Docker via
+`supabase start`. El hosting de producción está diferido (ver `SPEC §9.2`).
 
 La fuente de verdad funcional es `SPEC.md`. Este archivo define **cómo** se
 escribe el código; `SPEC.md` define **qué** hace el código.
@@ -84,18 +85,19 @@ mm-vida-saludable/
 
 ## 3. Stack y versiones
 
-| Capa             | Tecnología                         | Notas                                                                               |
-| ---------------- | ---------------------------------- | ----------------------------------------------------------------------------------- |
-| Frontend         | HTML5 + CSS + JavaScript (ES2022+) | Posible migración a TypeScript/React documentada en ADR cuando el admin lo amerite. |
-| Base de datos    | PostgreSQL (Supabase)              | Migraciones versionadas con Supabase CLI.                                           |
-| Auth             | Supabase Auth                      | Email + contraseña en v1. MFA a definir (ver SPEC §9).                              |
-| Serverless       | Vercel Functions (Node.js LTS)     | Solo para operaciones que requieren `service_role` key.                             |
-| Tests unit/integ | Vitest                             | Mismo runner para lógica pura y llamadas al cliente.                                |
-| Tests E2E        | Playwright                         | Flujos críticos: checkout, login admin, gestión de pedidos.                         |
-| Tests DB         | pgTAP                              | RLS y triggers se testean en la base, no desde JS.                                  |
-| Lint/Format      | ESLint + Prettier                  | Config en `eslint.config.js` y `.prettierrc`.                                       |
-| Commits          | Conventional Commits               | Validados con commitlint en pre-commit.                                             |
-| CI               | GitHub Actions                     | Pipeline obligatorio antes de merge.                                                |
+| Capa                    | Tecnología                                     | Notas                                                                                                                                                                                          |
+| ----------------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Frontend                | Vite 6 + React 19 + TypeScript 5               | Tailwind 4 para estilos. Documentado en `docs/adr/0001-stack-frontend.md`.                                                                                                                     |
+| Base de datos           | PostgreSQL (autohosteado vía `supabase start`) | Migraciones versionadas con Supabase CLI. Sin dependencia del cloud de Supabase.                                                                                                               |
+| API REST                | PostgREST (parte del stack autohosteado)       | Auto-generada del esquema; respeta RLS.                                                                                                                                                        |
+| Auth                    | GoTrue (parte del stack autohosteado)          | Email + contraseña en v1. MFA diferida a v1.1 (ver `SPEC §9.1`).                                                                                                                               |
+| Serverless / API custom | Diferido                                       | v1 no necesita serverless functions: el frontend habla directo con PostgREST. Si v1.1 requiere lógica server-side (sync proveedor), ver `SPEC §9.2` para definir runtime junto con el hosting. |
+| Tests unit/integ        | Vitest                                         | Mismo runner para lógica pura y llamadas al cliente.                                                                                                                                           |
+| Tests E2E               | Playwright                                     | Flujos críticos: checkout, login admin, gestión de pedidos.                                                                                                                                    |
+| Tests DB                | pgTAP                                          | RLS y triggers se testean en la base, no desde JS.                                                                                                                                             |
+| Lint/Format             | ESLint + Prettier                              | Config en `eslint.config.js` y `.prettierrc`.                                                                                                                                                  |
+| Commits                 | Conventional Commits                           | Validados con commitlint en pre-commit.                                                                                                                                                        |
+| CI                      | GitHub Actions                                 | Pipeline obligatorio antes de merge. Levanta `supabase start` para integration + E2E.                                                                                                          |
 
 Versiones de Node y npm se fijan en `.nvmrc` y `package.json` (`"engines"`).
 Dependencias con versiones fijas en `package.json`; el `package-lock.json`
@@ -107,9 +109,12 @@ se commitea siempre.
 
 Frontend y serverless funcionan distinto; cada uno tiene su regla.
 
-### 4.1 Serverless Functions (Node.js)
+### 4.1 Scripts y serverless (cuando aparezcan)
 
-Logging estructurado en JSON. Vercel captura `stdout` y lo indexa.
+v1 no tiene serverless functions; el frontend habla directo con PostgREST.
+Cuando aparezcan (Fase 2 sync, scripts de seed, eventuales API custom),
+logging estructurado en JSON sobre `stdout`. El runtime decide cómo
+indexarlo (Vercel, container logs, journald, etc.).
 
 ```js
 import { logger } from '../src/lib/logger.js'
@@ -365,7 +370,8 @@ Reglas no negociables, basadas en las recomendaciones actuales de Supabase:
 - La `anon` key es pública por diseño: está en el bundle del frontend.
   Seguridad descansa en RLS, no en ocultarla.
 - La `service_role` key **jamás** aparece en código que corra en el
-  navegador. Solo en variables de entorno de Vercel Functions.
+  navegador. Solo en variables de entorno de scripts/serverless (cuando
+  existan, ver `SPEC §9.2`).
 - Nunca commitear `.env`. Solo `.env.example` sin valores reales.
 
 ---
@@ -377,9 +383,11 @@ operativa para código:
 
 - Toda ruta nueva bajo `/admin/*` debe redirigir a `/admin/login` si no
   hay sesión válida **antes** de renderizar cualquier cosa.
-- Toda función serverless nueva que haga algo sensible valida el JWT del
-  header `Authorization: Bearer ...` con `supabase.auth.getUser(token)`
-  antes de ejecutar. Si falla, responde 401 y termina.
+- Toda función serverless o script con `service_role` que haga algo
+  sensible valida el JWT del header `Authorization: Bearer ...` con
+  `supabase.auth.getUser(token)` antes de ejecutar. Si falla, responde
+  401 y termina. (En v1 todavía no hay serverless; aplica desde el
+  primer endpoint que escribamos.)
 - Toda operación que modifique `productos_negocio`,
   `productos_proveedor`, `ordenes_proveedor` o estados de pedidos debe
   insertar una fila en `admin_audit_log`. Si se olvida el audit, el PR no
@@ -407,7 +415,9 @@ Antes de escribir una línea de código, el repo debe tener:
 - `.env.example` — listado de todas las variables necesarias, vacías.
 - `.nvmrc` con la versión de Node.
 - `vercel.json` con headers de seguridad (CSP, HSTS, etc.) como indica
-  SPEC §6.6.
+  SPEC §6.6. Se conserva como referencia de los headers requeridos
+  aunque el host de producción no esté decidido (`SPEC §9.2`); cuando
+  se elija, los mismos headers se aplican vía la config nativa del host.
 - `supabase/` inicializado con `supabase init`.
 
 Si alguno falta al arrancar una tarea nueva, la tarea incluye crearlo.
@@ -512,7 +522,9 @@ Pipeline mínimo en GitHub Actions para cada PR a `main`:
 PR no se puede mergear si alguno de los pasos falla. Dependabot/Renovate
 activo para alertas de CVEs en dependencias.
 
-Despliegue: push a `main` → deploy automático en Vercel.
+Despliegue: diferido. La estrategia de deploy se define junto con el
+hosting de producción (`SPEC §9.2`). Mientras tanto la app se valida
+localmente contra `supabase start`.
 
 ---
 
@@ -564,6 +576,7 @@ obvio.
 
 ## Historial de cambios
 
-| Versión | Fecha      | Cambios                                                                                                                                                                                                                                                                 |
-| ------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.0     | 2026-04-23 | Adaptación inicial desde CLAUDE.md global de data engineering a proyecto full-stack web (Supabase + HTML/JS + Vercel). Incorpora SDD, TDD con pirámide unit/integration/E2E, testing de RLS con pgTAP, Conventional Commits, seguridad operativa, accesibilidad y ADRs. |
+| Versión | Fecha      | Cambios                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0     | 2026-04-23 | Adaptación inicial desde CLAUDE.md global de data engineering a proyecto full-stack web (Supabase + HTML/JS + Vercel). Incorpora SDD, TDD con pirámide unit/integration/E2E, testing de RLS con pgTAP, Conventional Commits, seguridad operativa, accesibilidad y ADRs.                                                                                                                                                                                                                                                           |
+| 1.1     | 2026-04-24 | Alineación con SPEC v1.5: el stack pasa a ser Supabase autohosteado (Postgres + GoTrue + PostgREST) corriendo via `supabase start`. Se elimina la asunción "frontend en Vercel + serverless en Vercel Functions"; el frontend (Vite + React + TS + Tailwind) habla directo con PostgREST en v1. Serverless / API custom diferido junto con la decisión de hosting (`SPEC §9.2`). §3 stack table actualizada, §4.1 logging reformulado, §8.3 service_role independiente del runtime, §13 CI/CD elimina deploy automático a Vercel. |
