@@ -1,7 +1,7 @@
 # Plan de ejecución — M&M Vida Saludable
 
-> Derivado de `SPEC.md` v1.2 y alineado a `CLAUDE.md` (SDD + TDD).
-> **Fecha:** 2026-04-23 · **Estado:** Draft
+> Derivado de `SPEC.md` v1.5 y alineado a `CLAUDE.md` (SDD + TDD).
+> **Fecha:** 2026-04-24 · **Estado:** Draft
 
 ---
 
@@ -39,7 +39,8 @@ Según `CLAUDE.md §10`, faltan:
 - GitHub Actions con pipeline de `CLAUDE.md §13`: lint → unit → integration → rls → e2e → build.
 - Protección de rama `main`: no merge sin CI verde.
 - Dependabot/Renovate habilitado.
-- Proyecto Supabase creado (dev + prod separados) y Vercel linkeado al repo.
+- DB local con `supabase start` (Docker). Levanta Postgres + GoTrue + PostgREST + Studio sin tocar el cloud de Supabase.
+- Hosting de producción **diferido** hasta validación con cliente (ver `SPEC §9.2`). Mientras tanto, dev y CI corren todo contra la pila local; no hace falta reservar VPS, contratar Vercel, ni mantener un proyecto Supabase Cloud.
 
 ### 0.4 Caracterización del catálogo inicial del negocio (bloqueante Fase 1)
 
@@ -135,7 +136,7 @@ Para cada tabla, escribir primero los tests pgTAP en `supabase/tests/` y despué
 
 Ejecutar `SPEC §6.8` completo antes de cerrar fase.
 
-**Entregables Fase 1:** app en Vercel con catálogo leyendo Supabase, checkout funcional, login admin, gestión básica de pedidos, RLS probado.
+**Entregables Fase 1:** app local funcional con catálogo leyendo Supabase autohosteado, checkout, login admin, gestión básica de pedidos, RLS probado. El cutover a un host de producción y la migración de datos del Excel a un Postgres "real" se planifican post-Fase 1, una vez decidido el hosting (`SPEC §9.2`).
 
 ---
 
@@ -226,15 +227,16 @@ Según `SPEC §8`. No planificar hasta cerrar v1.
 
 ## Riesgos y cómo mitigarlos
 
-| Riesgo                                                 | Impacto                                                          | Mitigación                                                                                                  |
-| ------------------------------------------------------ | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Sheet del proveedor sin clave estable                  | Cambios tipográficos generan falsos "nuevos" + "bajas" mes a mes | `codigo_externo` sintético + acción manual de **fusión** en UI de sync. ADR de Fase 0.5 documenta patrones. |
-| Patrón nuevo en la Sheet no contemplado por el parser  | Sync silencioso e incorrecto                                     | Parser emite warning visible en UI cuando no reconoce una sección; nunca silenciar                          |
-| Cambios del proveedor frecuentes durante desarrollo    | Inconsistencia de fixtures del parser                            | Trabajar contra copia congelada de la Sheet en `files/` hasta cerrar Fase 2                                 |
-| RLS mal configurado filtra datos                       | Crítico (seguridad)                                              | pgTAP obligatorio en cada migración; no merge sin tests                                                     |
-| Migración de `index.html` rompe UX actual              | Clientes reales ven errores                                      | Deploy preview primero; feature flag o subdominio hasta validar                                             |
-| Decisión "vanilla vs React" tarde                      | Retrabajo                                                        | Decidir en ADR antes de Fase 1.5; SPEC admite ambos                                                         |
-| 195 packs del Excel sin asociar al proveedor en Fase 2 | Sync no impacta a esos packs hasta asociarlos                    | UI de asociación en `/admin/catalogo` con búsqueda; asociación incremental aceptable                        |
+| Riesgo                                                 | Impacto                                                          | Mitigación                                                                                                                                                                        |
+| ------------------------------------------------------ | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sheet del proveedor sin clave estable                  | Cambios tipográficos generan falsos "nuevos" + "bajas" mes a mes | `codigo_externo` sintético + acción manual de **fusión** en UI de sync. ADR de Fase 0.5 documenta patrones.                                                                       |
+| Patrón nuevo en la Sheet no contemplado por el parser  | Sync silencioso e incorrecto                                     | Parser emite warning visible en UI cuando no reconoce una sección; nunca silenciar                                                                                                |
+| Cambios del proveedor frecuentes durante desarrollo    | Inconsistencia de fixtures del parser                            | Trabajar contra copia congelada de la Sheet en `files/` hasta cerrar Fase 2                                                                                                       |
+| RLS mal configurado filtra datos                       | Crítico (seguridad)                                              | pgTAP obligatorio en cada migración; no merge sin tests                                                                                                                           |
+| Migración de `index.html` rompe UX actual              | Clientes reales ven errores cuando se haga el cutover            | El sitio actual sigue corriendo en `main` desde GitHub Pages; el cutover a cualquier host nuevo se hace al final de Fase 1 después de validar local con el cliente (`SPEC §9.2`). |
+| Decisión de hosting de producción tomada tarde         | Re-trabajo de variables de entorno y CI                          | Variables de entorno aisladas en `.env.local`; CI funciona contra Supabase autohosteado en cualquier host.                                                                        |
+| Decisión "vanilla vs React" tarde                      | Retrabajo                                                        | Decidir en ADR antes de Fase 1.5; SPEC admite ambos                                                                                                                               |
+| 195 packs del Excel sin asociar al proveedor en Fase 2 | Sync no impacta a esos packs hasta asociarlos                    | UI de asociación en `/admin/catalogo` con búsqueda; asociación incremental aceptable                                                                                              |
 
 ---
 
@@ -254,3 +256,4 @@ Según `SPEC §8`. No planificar hasta cerrar v1.
 | 1.0     | 2026-04-23 | Versión inicial del plan de ejecución, derivado del SPEC v1.2.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | 1.1     | 2026-04-23 | Se alinea con SPEC v1.3. Fase 0.1 cierra las 5 decisiones que bloqueaban diseño (markup 20%, soft delete, imagen del Excel, MFA→v1.1, sesión 1h+7d). Fase 0.4 reorienta la caracterización al Excel del negocio (hoja `catalog`, 195 filas) y difiere la caracterización de la Sheet del proveedor a Fase 2. Fase 1.1 marca FK `id_producto_proveedor` como nullable. Fase 1.4 reemplaza la carga desde la Sheet del proveedor por importación desde `files/MM_productos_naturales.xlsx`.                                                               |
 | 1.2     | 2026-04-23 | Se alinea con SPEC v1.4 (Opción Y: parser tolerante + fusión manual). Nueva Fase 0.5 dedicada a documentar en ADR los 5 patrones de la Sheet del proveedor (bloqueante Fase 2, no Fase 1). Fase 1.1 incorpora las columnas nuevas de `productos_proveedor` (`nombre_base`, `presentacion`, `codigo_externo` sintético, estado `sin_precio`, `reemplaza_a`). Fase 2 reescrita con parser por patrón, UI de fusión, primera carga del snapshot y asociación manual; estimación pasa de 2 a 3–4 semanas. Matriz de riesgos y orden de ataque actualizados. |
+| 1.3     | 2026-04-24 | Se alinea con SPEC v1.5. Fase 0.3 elimina "Proyecto Supabase Cloud + Vercel linkeado" como prerequisito; deja solo la pila local autohosteada con `supabase start`. Entregables Fase 1 reformulados: app local funcional, no app deployada; el cutover de hosting se difiere a post-Fase 1 (`SPEC §9.2`). Matriz de riesgos: el riesgo "Migración de `index.html`" se reformula y se agrega "Decisión de hosting tardía". Sin cambios al código.                                                                                                        |
