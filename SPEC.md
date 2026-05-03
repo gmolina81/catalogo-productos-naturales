@@ -1,7 +1,7 @@
 # Especificación Técnica y Funcional — M&M Vida Saludable
 
 > Plataforma de catálogo, pedidos y gestión de compra al proveedor.
-> **Versión:** 1.2 · **Fecha:** Abril 2026 · **Estado:** Draft
+> **Versión:** 1.5 · **Fecha:** Abril 2026 · **Estado:** Draft
 
 ---
 
@@ -85,13 +85,13 @@ Desarrollar una aplicación web que permita:
 
 ### 3.1 Stack tecnológico
 
-| Componente           | Tecnología                                                                     | Motivo                                                                                                                                                                                             |
-| -------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Frontend**         | HTML + CSS + JavaScript vanilla (base actual) o React/Vite si se decide migrar | Se puede evolucionar el `index.html` actual sin rehacer nada. Si el admin crece, conviene React.                                                                                                   |
-| **Backend / DB**     | Supabase (PostgreSQL + API REST + Auth)                                        | Free tier generoso, API autogenerada, roles y políticas de seguridad (RLS), realtime incluido. Auth incluido con gestión de sesiones por JWT.                                                      |
-| **Fuente proveedor** | Google Sheets (la actual)                                                      | Se mantiene. Acceso de lectura vía endpoint `gviz` ya en uso.                                                                                                                                      |
-| **Hosting**          | Vercel (recomendado) o Netlify                                                 | Gratis, deploy automático desde GitHub, soporta functions serverless si luego se necesitan (emails, WhatsApp API, sync de precios, etc.). GitHub Pages alcanza para la v1 pero limita extensiones. |
-| **Notificaciones**   | WhatsApp Click-to-Chat (v1) / WhatsApp Business API (futuro)                   | En la v1 alcanza con generar un link `wa.me` precargado con el resumen del pedido.                                                                                                                 |
+| Componente                | Tecnología                                                                     | Motivo                                                                                                                                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend**              | HTML + CSS + JavaScript vanilla (base actual) o React/Vite si se decide migrar | Se puede evolucionar el `index.html` actual sin rehacer nada. Si el admin crece, conviene React.                                                                                                                       |
+| **Backend / DB**          | Supabase stack autohosteado (PostgreSQL + GoTrue + PostgREST + Studio)         | El stack open-source de Supabase corre en Docker via `supabase start` para dev y CI. La API REST autogenerada, RLS, y Auth se mantienen idénticos. **No depende del cloud de Supabase.** Producción se difiere a §9.2. |
+| **Fuente proveedor**      | Google Sheets (la actual)                                                      | Se mantiene. Acceso de lectura vía endpoint `gviz` ya en uso.                                                                                                                                                          |
+| **Hosting de producción** | Por decidir (ver §9.2)                                                         | v1 se desarrolla y valida en local. La elección de hosting (VPS único, Vercel + DB administrada, otro Postgres autohosteado, etc.) se difiere hasta validar la app con el cliente.                                     |
+| **Notificaciones**        | WhatsApp Click-to-Chat (v1) / WhatsApp Business API (futuro)                   | En la v1 alcanza con generar un link `wa.me` precargado con el resumen del pedido.                                                                                                                                     |
 
 ### 3.2 Diagrama de componentes
 
@@ -103,7 +103,7 @@ Desarrollar una aplicación web que permita:
           │ fetch (gviz JSON) — periódico + on demand
           ▼
 ┌─────────────────────────────────────────────────────────┐
-│                Frontend (Vercel)                        │
+│                Frontend (host por decidir, §9.2)        │
 │  Zona pública (sin auth)                                │
 │  - /            Catálogo público + carrito              │
 │  - /checkout    Datos del cliente + confirmación        │
@@ -120,11 +120,14 @@ Desarrollar una aplicación web que permita:
           │ (con JWT en header       │
           │  para rutas protegidas)  │
           ▼                          ▼
-┌────────────────────────┐    Cliente / Admin
-│   Supabase             │
-│   ├─ Auth              │  (auth.users: cuenta admin)
-│   └─ PostgreSQL + RLS  │
-│      - proveedores     │  (v1: fila única)
+┌────────────────────────────────┐    Cliente / Admin
+│  Supabase stack (autohost)     │
+│  Docker compose: dev/CI local  │
+│  Producción: §9.2              │
+│   ├─ GoTrue (Auth)             │  (auth.users: cuenta admin)
+│   ├─ PostgREST (API REST)      │
+│   └─ PostgreSQL + RLS          │
+│      - proveedores             │  (v1: fila única)
 │      - productos_proveedor
 │      - productos_negocio
 │      - mapeo_pack_bulto
@@ -133,8 +136,8 @@ Desarrollar una aplicación web que permita:
 │      - pedido_items
 │      - ordenes_proveedor
 │      - sync_proveedor_logs
-│      - admin_audit_log │  (trazabilidad de acciones admin)
-└────────────────────────┘
+│      - admin_audit_log         │  (trazabilidad de acciones admin)
+└────────────────────────────────┘
 ```
 
 ### 3.3 Flujo de sincronización con el proveedor
@@ -733,6 +736,11 @@ Antes de liberar la v1 a producción, confirmar:
 2. **Stock de seguridad:** ¿margen extra en la orden al proveedor (ej. +10%)?
 3. **Frecuencia de sincronización:** v1 manual. ¿Recordatorio si pasaron X días?
 4. **Fraccionamiento múltiple:** ¿un pack puede combinar varios productos del proveedor?
+5. **Hosting de producción.** v1 se desarrolla y valida en local con `supabase start` (Docker). Antes de v1.0 hay que decidir dónde corre la app y la DB en producción. Opciones contempladas:
+   - **(a) VPS único** (Hetzner / DigitalOcean / Linode, ~$5-6/mes) corriendo el `docker-compose` autohosteado de Supabase + nginx para el frontend buildeado.
+   - **(b) Frontend en hosting estático** (Vercel / Netlify / Cloudflare Pages) + Postgres + GoTrue + PostgREST en un VPS o cloud aparte. Más piezas pero separación clara entre frontend público y backend.
+   - **(c) Reactivar Supabase Cloud** si los límites del free tier son aceptables. Decartado por el usuario por preferencia de no depender del SaaS, pero queda como opción de emergencia.
+     La decisión se bloquea hasta validar la app con el cliente; mientras tanto el SPEC trata el host como variable libre y todo lo que se construye corre idéntico contra `supabase start`.
 
 ---
 
@@ -760,10 +768,11 @@ Antes de liberar la v1 a producción, confirmar:
 
 ## Historial de cambios
 
-| Versión | Fecha      | Autor | Cambios                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| ------- | ---------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.0     | 2026-04-23 | —     | Versión inicial                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| 1.1     | 2026-04-23 | —     | Proveedor único como entidad extensible. Catálogo como curación explícita. Flujo `/admin/sync-proveedor`. Snapshot `productos_proveedor`. Campos `precio_modo` y `markup_pct`. Tabla `sync_proveedor_logs`.                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| 1.2     | 2026-04-23 | —     | Nuevo capítulo §6 de seguridad y autenticación con políticas RLS detalladas, hardening, gestión de incidentes y checklist pre-producción. Tabla `admin_audit_log` para trazabilidad. Campos `ejecutado_por` y `generada_por` en logs y órdenes. Separación explícita entre cliente (sin auth) y admin (Supabase Auth). Nueva decisión abierta sobre MFA.                                                                                                                                                                                                                                                                                           |
-| 1.3     | 2026-04-23 | —     | Cierre de 5 decisiones de §9 (markup 20% default editable, soft delete, imagen inicial desde Excel editable, MFA diferida a v1.1, sesión 1h+7d). `productos_negocio.id_producto_proveedor` marcada nullable para permitir seed del catálogo existente sin vínculo inmediato al proveedor. Fase 1 redefine la importación inicial: ahora carga desde `files/MM_productos_naturales.xlsx` (hoja `catalog`) a `productos_negocio`, reemplazando la carga desde la Sheet del proveedor.                                                                                                                                                                |
-| 1.4     | 2026-04-23 | —     | La Sheet del proveedor es una lista humana no tabular. §4.1 `productos_proveedor`: nuevas columnas `nombre_base`, `nombre_original`, `presentacion`, `reemplaza_a`; `codigo_externo` pasa a ser sintético derivado de `(nombre_base, presentacion)`; `precio_bulto` nullable; estado gana valor `sin_precio`. §5.3.3: nueva acción manual de **fusión** `(nuevo, baja)` para cambios tipográficos del proveedor; se distingue "sin precio temporal" de "baja". §5.3.3.1 nuevo: documenta los 5 patrones de la Sheet que debe manejar el parser. §1.5: constatación de que la Sheet no es tabular. §8 Fase 2: estimación actualizada a 3–4 semanas. |
+| Versión | Fecha      | Autor | Cambios                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------- | ---------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0     | 2026-04-23 | —     | Versión inicial                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 1.1     | 2026-04-23 | —     | Proveedor único como entidad extensible. Catálogo como curación explícita. Flujo `/admin/sync-proveedor`. Snapshot `productos_proveedor`. Campos `precio_modo` y `markup_pct`. Tabla `sync_proveedor_logs`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 1.2     | 2026-04-23 | —     | Nuevo capítulo §6 de seguridad y autenticación con políticas RLS detalladas, hardening, gestión de incidentes y checklist pre-producción. Tabla `admin_audit_log` para trazabilidad. Campos `ejecutado_por` y `generada_por` en logs y órdenes. Separación explícita entre cliente (sin auth) y admin (Supabase Auth). Nueva decisión abierta sobre MFA.                                                                                                                                                                                                                                                                                                                                                        |
+| 1.3     | 2026-04-23 | —     | Cierre de 5 decisiones de §9 (markup 20% default editable, soft delete, imagen inicial desde Excel editable, MFA diferida a v1.1, sesión 1h+7d). `productos_negocio.id_producto_proveedor` marcada nullable para permitir seed del catálogo existente sin vínculo inmediato al proveedor. Fase 1 redefine la importación inicial: ahora carga desde `files/MM_productos_naturales.xlsx` (hoja `catalog`) a `productos_negocio`, reemplazando la carga desde la Sheet del proveedor.                                                                                                                                                                                                                             |
+| 1.4     | 2026-04-23 | —     | La Sheet del proveedor es una lista humana no tabular. §4.1 `productos_proveedor`: nuevas columnas `nombre_base`, `nombre_original`, `presentacion`, `reemplaza_a`; `codigo_externo` pasa a ser sintético derivado de `(nombre_base, presentacion)`; `precio_bulto` nullable; estado gana valor `sin_precio`. §5.3.3: nueva acción manual de **fusión** `(nuevo, baja)` para cambios tipográficos del proveedor; se distingue "sin precio temporal" de "baja". §5.3.3.1 nuevo: documenta los 5 patrones de la Sheet que debe manejar el parser. §1.5: constatación de que la Sheet no es tabular. §8 Fase 2: estimación actualizada a 3–4 semanas.                                                              |
+| 1.5     | 2026-04-24 | —     | Stack desacoplado del cloud de Supabase. §3.1: el "Backend / DB" pasa a ser el stack open-source de Supabase (Postgres + GoTrue + PostgREST + Studio) corriendo en Docker via `supabase start` para dev y CI. §3.1: la fila "Hosting" deja de recomendar Vercel y se difiere a §9.2. §3.2: diagrama de componentes ajustado para mostrar la pila autohosteada y "host por decidir" en el frontend. §9.2: nueva decisión abierta "Hosting de producción" con tres opciones contempladas (VPS único, frontend estático + backend separado, o reactivar Supabase Cloud). El cambio no requiere modificación de código: las 8 migraciones, las 3 RPCs y los 184 tests pgTAP ya corren contra el stack autohosteado. |
