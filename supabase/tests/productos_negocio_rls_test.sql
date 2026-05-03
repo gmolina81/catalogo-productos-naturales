@@ -49,8 +49,10 @@ SELECT col_is_null(
 
 SELECT col_not_null('public', 'productos_negocio', 'nombre_publico',
     'nombre_publico NOT NULL');
-SELECT col_not_null('public', 'productos_negocio', 'precio_venta',
-    'precio_venta NOT NULL');
+SELECT col_is_null(
+    'public', 'productos_negocio', 'precio_venta',
+    'precio_venta es nullable (Fase 1.4 carga packs sin precio con activo=false; SPEC §4.1)'
+);
 
 -- ====== Seguridad ======
 
@@ -61,6 +63,10 @@ SELECT ok(
 );
 
 -- ====== Fixtures: 2 packs, uno activo y uno inactivo ======
+-- Limpiar el seed que carga el catálogo del Excel (191 packs) para que las
+-- aserciones de conteo se midan solo contra las filas que insertamos acá.
+-- TRUNCATE corre dentro de la transacción del test; ROLLBACK al final restaura.
+TRUNCATE public.mapeo_pack_bulto, public.productos_negocio CASCADE;
 
 INSERT INTO public.productos_negocio
     (id, nombre_publico, categoria, presentacion, precio_venta, activo)

@@ -42,6 +42,11 @@ SELECT ok(
 );
 
 -- ====== Fixtures ======
+-- Limpiar el seed del Excel (191 packs + 191 mapeos) antes de insertar
+-- los fixtures de este test. TRUNCATE en la transacción del test;
+-- ROLLBACK al final restaura.
+TRUNCATE public.mapeo_pack_bulto, public.productos_negocio CASCADE;
+
 -- Un pack y su mapeo.
 INSERT INTO public.productos_negocio
     (id, nombre_publico, categoria, presentacion, precio_venta, activo)

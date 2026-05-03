@@ -64,6 +64,10 @@ SELECT has_function(
 );
 
 -- ====== Fixture: un usuario admin fake ======
+-- Limpiar la tabla: tests de integración previos pueden haber dejado filas
+-- (admin_audit_log no tiene policy DELETE, por eso usamos TRUNCATE como
+-- postgres dentro de la transacción del test; ROLLBACK al final restaura).
+TRUNCATE public.admin_audit_log;
 
 INSERT INTO auth.users (id, is_sso_user, is_anonymous)
 VALUES ('99999999-9999-9999-9999-999999999999', false, false);
