@@ -3,34 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Productos Naturales</title>
+    <title>M&M Vida Saludable - Catalogo</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-            color: #333;
+        :root {
+            --verde: #2e7d32;
+            --verde-oscuro: #1b5e20;
+            --verde-suave: #e8f5e9;
+            --whatsapp: #25d366;
+            --texto: #2f332f;
+            --muted: #66706a;
+            --borde: #dde5df;
+            --fondo: #f6f8f5;
+            --blanco: #fff;
+            --sombra: 0 10px 30px rgba(31, 48, 35, 0.14);
         }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: var(--fondo);
+            color: var(--texto);
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
         header {
-            background-color: rgba(46, 120, 50, 0.85); /* Color verde con transparencia */
-            background-image: url('https://content.clara.es/medio/2024/03/14/alimentos-se-pueden-comer-dieta-keto_4f372e66_240314152237_800x500.jpg');
+            background-color: rgba(46, 120, 50, 0.85);
+            background-image: url("https://content.clara.es/medio/2024/03/14/alimentos-se-pueden-comer-dieta-keto_4f372e66_240314152237_800x500.jpg");
             background-size: cover;
             background-position: center;
             background-blend-mode: overlay;
             color: white;
             text-align: center;
-            padding: 3rem 0;
+            padding: 2.8rem 0 2.4rem;
             margin-bottom: 2rem;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             position: relative;
         }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
         .header-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
+
         .logo-container {
             background-color: white;
             border-radius: 50%;
@@ -43,108 +76,490 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             border: 3px solid #e8f5e9;
         }
+
         .logo {
             width: 85%;
             height: 85%;
             object-fit: contain;
         }
-        
+
         h1 {
             margin: 0;
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 5vw, 2.7rem);
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 0;
         }
+
         header p {
-            font-size: 1.2rem;
-            margin-top: 0.5rem;
+            font-size: 1.15rem;
+            margin: 0.5rem auto 0;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            max-width: 680px;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 18px;
         }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            padding: 9px 15px;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.34);
+            background: rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(5px);
+        }
+
+        .pill.whatsapp {
+            background: var(--whatsapp);
+            border-color: transparent;
+        }
+
+        .filtros {
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: minmax(180px, 260px) 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--borde);
+            border-radius: 6px;
+            font-size: 1rem;
+            background: white;
+            color: var(--texto);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 74px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-weight: 700;
+            transition: transform 0.18s ease, background-color 0.18s ease, opacity 0.18s ease;
+            min-height: 42px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background-color: var(--verde);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--verde-oscuro);
+        }
+
+        .btn-soft {
+            background: var(--verde-suave);
+            color: var(--verde-oscuro);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--verde-oscuro);
+            border: 1px solid var(--borde);
+        }
+
         .productos-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
             margin-top: 20px;
         }
+
         .producto {
             background-color: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+
+        .producto:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--sombra);
+        }
+
+        .producto-imagen-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            background-color: #f9f9f9;
+        }
+
+        .producto img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
             transition: transform 0.3s ease;
         }
-        .producto:hover {
-            transform: translateY(-5px);
+
+        .producto:hover img {
+            transform: scale(1.05);
         }
-        .producto img {
-            width: 80%;
-            height: 150px;
-            object-fit: cover;
-        }
+
         .producto-info {
             padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
         }
-        .producto-nombre {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-top: 0;
-            color: #2e7d32;
-        }
+
         .producto-categoria {
-            display: inline-block;
-            background-color: #e8f5e9;
-            color: #2e7d32;
+            display: inline-flex;
+            align-self: flex-start;
+            background-color: var(--verde-suave);
+            color: var(--verde);
             padding: 5px 10px;
             border-radius: 15px;
             font-size: 0.8rem;
-            margin-bottom: 10px;
+            font-weight: 700;
         }
-        .producto-descripcion {
-            color: #666;
-            margin-bottom: 15px;
+
+        .producto-nombre {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin: 0;
+            color: var(--verde);
+            line-height: 1.25;
         }
+
         .producto-precio {
-            font-weight: bold;
+            font-weight: 800;
             font-size: 1.1rem;
             color: #333;
+            margin: auto 0 0;
         }
-        .loading {
+
+        .producto-actions {
+            display: grid;
+            grid-template-columns: 92px 1fr;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .cantidad-control {
+            display: grid;
+            grid-template-columns: 30px 1fr 30px;
+            border: 1px solid var(--borde);
+            border-radius: 6px;
+            overflow: hidden;
+            min-height: 42px;
+        }
+
+        .cantidad-control button {
+            border: 0;
+            background: #f3f7f3;
+            color: var(--verde-oscuro);
+            font-weight: 900;
+        }
+
+        .cantidad-control input {
+            border: 0;
+            padding: 0;
             text-align: center;
-            padding: 50px;
-            font-size: 1.2rem;
-            color: #666;
+            border-radius: 0;
+            min-width: 0;
         }
-        .filtros {
-            margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
+
+        .loading {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px 18px;
+            font-size: 1.15rem;
+            color: var(--muted);
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--borde);
+        }
+
+        .cart-button {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            z-index: 900;
+            display: inline-flex;
+            align-items: center;
             gap: 10px;
-        }
-        select, input {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-        .btn-filtrar {
-            background-color: #2e7d32;
+            border-radius: 999px;
+            border: 0;
+            background: var(--verde);
             color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
+            padding: 12px 16px;
+            font-weight: 800;
+            box-shadow: var(--sombra);
         }
-        .btn-filtrar:hover {
-            background-color: #1b5e20;
+
+        .cart-count {
+            display: inline-grid;
+            place-items: center;
+            min-width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            background: white;
+            color: var(--verde-oscuro);
+            font-size: 0.88rem;
+            padding: 0 6px;
         }
+
+        .cart-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(20, 25, 20, 0.52);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .cart-panel {
+            position: fixed;
+            z-index: 1001;
+            top: 0;
+            right: 0;
+            width: min(440px, 100%);
+            height: 100vh;
+            background: white;
+            box-shadow: -12px 0 32px rgba(0, 0, 0, 0.2);
+            transform: translateX(100%);
+            transition: transform 0.24s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.cart-open {
+            overflow: hidden;
+        }
+
+        body.cart-open .cart-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        body.cart-open .cart-panel {
+            transform: translateX(0);
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 18px 14px;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .cart-header h2 {
+            font-size: 1.25rem;
+            margin: 0;
+            color: var(--verde-oscuro);
+        }
+
+        .icon-button {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            border: 1px solid var(--borde);
+            background: white;
+            color: var(--verde-oscuro);
+            font-size: 1.3rem;
+            line-height: 1;
+        }
+
+        .cart-body {
+            flex: 1;
+            overflow: auto;
+            padding: 14px 18px;
+        }
+
+        .cart-empty {
+            color: var(--muted);
+            text-align: center;
+            padding: 34px 10px;
+            border: 1px dashed var(--borde);
+            border-radius: 8px;
+            background: #fbfcfb;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 64px 1fr;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .cart-item img {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #f5f5f5;
+        }
+
+        .cart-item-title {
+            margin: 0 0 4px;
+            font-weight: 800;
+            line-height: 1.25;
+            color: var(--texto);
+        }
+
+        .cart-item-meta {
+            color: var(--muted);
+            font-size: 0.93rem;
+            margin-bottom: 8px;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .mini-qty {
+            display: inline-grid;
+            grid-template-columns: 28px 34px 28px;
+            border: 1px solid var(--borde);
+            border-radius: 6px;
+            overflow: hidden;
+            height: 32px;
+        }
+
+        .mini-qty button {
+            border: 0;
+            background: #f4f8f4;
+            color: var(--verde-oscuro);
+            font-weight: 900;
+        }
+
+        .mini-qty span {
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            color: var(--texto);
+        }
+
+        .remove-btn {
+            border: 0;
+            background: transparent;
+            color: #a13d32;
+            font-weight: 700;
+            padding: 6px 0;
+        }
+
+        .cart-footer {
+            border-top: 1px solid var(--borde);
+            padding: 14px 18px 18px;
+            background: #fbfcfb;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            font-weight: 900;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+        }
+
+        .checkout-fields {
+            display: grid;
+            gap: 9px;
+            margin-bottom: 12px;
+        }
+
+        .checkout-fields label {
+            display: grid;
+            gap: 4px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .cart-note {
+            font-size: 0.9rem;
+            line-height: 1.35;
+            color: var(--muted);
+            margin: 0 0 12px;
+        }
+
+        .payment-note {
+            background: var(--verde-suave);
+            border: 1px solid #c8dfca;
+            border-radius: 8px;
+            color: var(--verde-oscuro);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin: 0 0 12px;
+            padding: 10px 12px;
+        }
+
+        .payment-note strong {
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .footer-actions {
+            display: grid;
+            gap: 8px;
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            bottom: 88px;
+            right: 30px;
+            background-color: var(--whatsapp);
+            color: white;
+            border-radius: 50%;
+            width: 58px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.28);
+            z-index: 850;
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.08);
+            background-color: #128c7e;
+        }
+
         footer {
             background-color: #333;
             color: white;
@@ -152,52 +567,32 @@
             padding: 1rem 0;
             margin-top: 3rem;
         }
-        .producto-imagen-container {
-            position: relative;
-            width: 100%;
-            height: 0;
-            padding-bottom: 75%; /* Proporción 4:3 (cambia a 100% para 1:1 o a 56.25% para 16:9) */
-            overflow: hidden;
-            background-color: #f9f9f9; /* Color de fondo mientras carga la imagen */
-        }
-        
-        .producto img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Cubre todo el contenedor manteniendo la proporción */
-            object-position: center; /* Centra la imagen */
-            transition: transform 0.3s ease;
-        }
-        /* Efecto opcional de zoom al pasar el mouse */
-        .producto:hover img {
-            transform: scale(1.05);
-        }
-        /* Estilos para botón flotante de WhatsApp */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: #25D366;
-            color: white;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            text-decoration: none;
-            box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        
-        .whatsapp-float:hover {
-            transform: scale(1.1);
-            background-color: #128C7E;
+
+        @media (max-width: 720px) {
+            header {
+                padding: 2.1rem 0 2rem;
+            }
+
+            .filtros {
+                grid-template-columns: 1fr;
+            }
+
+            .productos-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-button {
+                right: 14px;
+                bottom: 14px;
+                padding: 11px 14px;
+            }
+
+            .whatsapp-float {
+                right: 18px;
+                bottom: 78px;
+                width: 54px;
+                height: 54px;
+            }
         }
     </style>
 </head>
@@ -208,112 +603,225 @@
                 <div class="logo-container">
                     <img src="https://img.icons8.com/color/240/000000/natural-food.png" alt="Logo Productos Naturales" class="logo">
                 </div>
-                <h1>M&M Vida Saludable</h1>
-                <p>Catálogo completo de productos para tu bienestar</p>
+                <h1>M&amp;M Vida Saludable</h1>
+                <p>Catalogo completo de productos para tu bienestar</p>
+                <div class="header-actions">
+                    <a class="pill whatsapp" href="https://wa.me/5491172423959" target="_blank" rel="noopener">WhatsApp</a>
+                </div>
             </div>
         </div>
-        <div class="whatsapp-contact">
-            <a href="https://wa.me/5491168692888" target="_blank" style="display: inline-flex; align-items: center; background-color: #25D366; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 15px; font-weight: bold;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white" style="margin-right: 8px;">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.297-.497.1-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                </svg>
-                Contactar por WhatsApp
-            </a>
-        </div>
     </header>
-    <div class="container">
+
+    <main class="container">
         <div class="filtros">
-            <select id="categoria-filtro">
-                <option value="">Todas las categorías</option>
-                <!-- Las categorías se cargarán dinámicamente -->
+            <select id="categoria-filtro" aria-label="Filtrar por categoria">
+                <option value="">Todas las categorias</option>
             </select>
-            <input type="text" id="busqueda" placeholder="Buscar productos...">
-            <button class="btn-filtrar" onclick="aplicarFiltros()">Filtrar</button>
+            <input type="text" id="busqueda" placeholder="Buscar productos..." aria-label="Buscar productos">
+            <button class="btn btn-primary" type="button" onclick="aplicarFiltros()">Filtrar</button>
         </div>
 
         <div id="productos" class="productos-container">
             <div class="loading">Cargando productos...</div>
         </div>
-    </div>
+    </main>
+
+    <button class="cart-button" type="button" onclick="abrirCarrito()" aria-label="Abrir carrito">
+        Carrito <span id="cart-count" class="cart-count">0</span>
+    </button>
+
+    <a href="https://wa.me/5491172423959" class="whatsapp-float" target="_blank" rel="noopener" title="Contactar por WhatsApp" aria-label="Contactar por WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.297-.497.1-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+    </a>
+
+    <div class="cart-overlay" onclick="cerrarCarrito()" aria-hidden="true"></div>
+    <aside class="cart-panel" aria-label="Carrito de compras">
+        <div class="cart-header">
+            <h2>Tu pedido</h2>
+            <button class="icon-button" type="button" onclick="cerrarCarrito()" aria-label="Cerrar carrito">x</button>
+        </div>
+        <div id="cart-body" class="cart-body"></div>
+        <div class="cart-footer">
+            <div class="total-row">
+                <span>Total</span>
+                <span id="cart-total">$0</span>
+            </div>
+            <div class="checkout-fields">
+                <label>
+                    Nombre
+                    <input id="cliente-nombre" type="text" autocomplete="name" placeholder="Tu nombre">
+                </label>
+                <label>
+                    Direccion
+                    <input id="cliente-direccion" type="text" autocomplete="street-address" placeholder="Calle, numero, piso/depto si corresponde">
+                </label>
+                <label>
+                    Area / barrio / zona
+                    <input id="cliente-area" type="text" placeholder="Ej: Nordelta, Benavidez, Villa Urquiza">
+                </label>
+                <label>
+                    Lote
+                    <input id="cliente-lote" type="text" placeholder="Ej: Lote 123, manzana 4">
+                </label>
+                <label>
+                    Observaciones
+                    <textarea id="cliente-notas" placeholder="Horarios, cambios, preferencias o consultas"></textarea>
+                </label>
+            </div>
+            <p class="cart-note">El pedido se recibe por WhatsApp y queda sujeto a disponibilidad.</p>
+            <div class="payment-note">
+                <strong>Pago por Mercado Pago / transferencia</strong>
+                Beatriz Carmen Pirotto<br>
+                Alias: mymvidasaludable.mp<br>
+                CVU: 0000003100034070333443<br>
+                CUIT/CUIL: 27116680861
+            </div>
+            <div class="footer-actions">
+                <button class="btn btn-primary" type="button" onclick="enviarPedidoWhatsapp()">Enviar pedido por WhatsApp</button>
+                <button id="mercado-pago-btn" class="btn btn-soft" type="button" onclick="abrirMercadoPago()" hidden>Pagar con Mercado Pago</button>
+                <button class="btn btn-outline" type="button" onclick="vaciarCarrito()">Vaciar carrito</button>
+            </div>
+        </div>
+    </aside>
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 M&M Vida Saludable - Todos los derechos reservados</p>
+            <p>&copy; 2026 M&amp;M Vida Saludable - Todos los derechos reservados</p>
         </div>
     </footer>
 
     <script>
-        // ID de la hoja de Google Sheets
-        const sheetId = '1No_OxeJh6PaRW4T2t1JbEPf6xqE585pqRPu6N2zUFnM';
-        
-        // El ID de la hoja se encuentra en la URL de tu Google Sheet:
-        // https://docs.google.com/spreadsheets/d/ESTE_ES_EL_ID/edit
-        
-        // URL de la API de Google Sheets (en formato JSON)
-        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
-        
-        // Variables globalese/
+        const config = {
+            sheetId: "1No_OxeJh6PaRW4T2t1JbEPf6xqE585pqRPu6N2zUFnM",
+            whatsappNumber: "5491172423959",
+            mercadoPagoLink: "",
+            datosPago: {
+                medio: "Mercado Pago / transferencia",
+                titular: "Beatriz Carmen Pirotto",
+                cvu: "0000003100034070333443",
+                alias: "mymvidasaludable.mp",
+                cuitCuil: "27116680861"
+            }
+        };
+
+        const sheetUrl = `https://docs.google.com/spreadsheets/d/${config.sheetId}/gviz/tq`;
+        const storageKey = "mmvidasaludable-carrito";
+
         let productos = [];
         let categorias = new Set();
-        
-        // Función para cargar los datos de Google Sheets
-        async function cargarProductos() {
+        let carrito = cargarCarrito();
+
+        function normalizarPrecio(precio) {
+            if (typeof precio === "number") return precio;
+            const limpio = String(precio || "")
+                .replace(/\$/g, "")
+                .replace(/\s/g, "")
+                .replace(/\./g, "")
+                .replace(",", ".");
+            const numero = parseFloat(limpio);
+            return Number.isFinite(numero) ? numero : 0;
+        }
+
+        function formatearPrecio(precio) {
+            const num = normalizarPrecio(precio);
+            return new Intl.NumberFormat("es-AR", {
+                style: "currency",
+                currency: "ARS",
+                maximumFractionDigits: num % 1 === 0 ? 0 : 2
+            }).format(num);
+        }
+
+        function escapeHtml(valor) {
+            return String(valor || "").replace(/[&<>"']/g, caracter => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
+            }[caracter]));
+        }
+
+        function cargarCarrito() {
             try {
-                const response = await fetch(sheetUrl);
-                const text = await response.text();
-        
-                // La respuesta de Google Sheets viene con un prefijo que debemos eliminar
-                // El formato es: "/*O_o*/google.visualization.Query.setResponse(...);"
-                const jsonText = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-                const json = JSON.parse(jsonText);
-                
-                // Extraer datos y convertirlos a un formato más útil
-                productos = json.table.rows.map(row => {
-                    // Columnas del Gsheet
-                    // ID, Nombre, Categoría, Descripción, Precio, URL de Imagen
-                    return {
-                        id: row.c[0] ? row.c[0].v : '',
-                        nombre: row.c[1] ? row.c[1].v : '',
-                        categoria: row.c[2] ? row.c[2].v : '',
-                        descripcion: row.c[3] ? row.c[3].v : '',
-                        precio: row.c[4] ? row.c[4].v : '',
-                        imagen: row.c[5] ? row.c[5].v : 'https://via.placeholder.com/300x200?text=Producto+Natural'
-                    };
-                });
-                
-                // Extraer todas las categorías únicas
-                productos.forEach(producto => {
-                    if (producto.categoria) {
-                        categorias.add(producto.categoria);
-                    }
-                });
-                
-                // Cargar las categorías en el filtro
-                const categoriaSelect = document.getElementById('categoria-filtro');
-                categorias.forEach(categoria => {
-                    const option = document.createElement('option');
-                    option.value = categoria;
-                    option.textContent = categoria;
-                    categoriaSelect.appendChild(option);
-                });
-                
-                // Mostrar los productos
-                mostrarProductos(productos);
-                
+                return JSON.parse(localStorage.getItem(storageKey)) || [];
             } catch (error) {
-                console.error('Error al cargar los productos:', error);
-                document.getElementById('productos').innerHTML = `
-                    <div class="loading">
-                        Error al cargar los productos. Por favor, intenta de nuevo más tarde.
-                    </div>
-                `;
+                return [];
             }
         }
-        
-        // Función para mostrar los productos en la página
+
+        function guardarCarrito() {
+            localStorage.setItem(storageKey, JSON.stringify(carrito));
+            renderCarrito();
+            actualizarContadorCarrito();
+        }
+
+        function cargarProductos() {
+            try {
+                window.recibirProductosGoogleSheets = procesarProductosGoogleSheets;
+
+                const scriptAnterior = document.getElementById("google-sheets-loader");
+                if (scriptAnterior) scriptAnterior.remove();
+
+                const script = document.createElement("script");
+                script.id = "google-sheets-loader";
+                script.src = `${sheetUrl}?tqx=out:json;responseHandler:recibirProductosGoogleSheets`;
+                script.onerror = mostrarErrorCargaProductos;
+                document.body.appendChild(script);
+            } catch (error) {
+                console.error("Error al cargar los productos:", error);
+                mostrarErrorCargaProductos();
+            }
+        }
+
+        function procesarProductosGoogleSheets(json) {
+            try {
+                productos = json.table.rows.map((row, index) => ({
+                    id: row.c[0] ? row.c[0].v : `producto-${index}`,
+                    nombre: row.c[1] ? row.c[1].v : "",
+                    categoria: row.c[2] ? row.c[2].v : "",
+                    descripcion: row.c[3] ? row.c[3].v : "",
+                    precio: row.c[4] ? row.c[4].v : "",
+                    imagen: row.c[5] ? row.c[5].v : "https://via.placeholder.com/300x200?text=Producto+Natural"
+                })).filter(producto => producto.nombre);
+
+                categorias = new Set();
+                productos.forEach(producto => {
+                    if (producto.categoria) categorias.add(producto.categoria);
+                });
+
+                cargarCategorias();
+                mostrarProductos(productos);
+                sincronizarCarritoConProductos();
+            } catch (error) {
+                console.error("Error al procesar los productos:", error);
+                mostrarErrorCargaProductos();
+            }
+        }
+
+        function mostrarErrorCargaProductos() {
+            document.getElementById("productos").innerHTML = `
+                <div class="loading">
+                    Error al cargar los productos. Por favor, intenta de nuevo mas tarde.
+                </div>
+            `;
+        }
+
+        function cargarCategorias() {
+            const categoriaSelect = document.getElementById("categoria-filtro");
+            categoriaSelect.innerHTML = '<option value="">Todas las categorias</option>';
+            Array.from(categorias).sort().forEach(categoria => {
+                const option = document.createElement("option");
+                option.value = categoria;
+                option.textContent = categoria;
+                categoriaSelect.appendChild(option);
+            });
+        }
+
         function mostrarProductos(productosAMostrar) {
-            const contenedor = document.getElementById('productos');
-            
+            const contenedor = document.getElementById("productos");
+
             if (productosAMostrar.length === 0) {
                 contenedor.innerHTML = `
                     <div class="loading">
@@ -322,66 +830,227 @@
                 `;
                 return;
             }
-            
-            let html = '';
-            
-            productosAMostrar.forEach(producto => {
-                html += `
-                    <div class="producto">
-                        <div class="producto-imagen-container">
-                            <img src="${producto.imagen}" alt="${producto.nombre}">
-                        </div>
-                        <div class="producto-info">
-                            <span class="producto-categoria">${producto.categoria}</span>
-                            <h3 class="producto-nombre">${producto.nombre}</h3>
-                            <p class="producto-precio">$${formatearPrecio(producto.precio)}</p>
+
+            contenedor.innerHTML = productosAMostrar.map(producto => `
+                <article class="producto">
+                    <div class="producto-imagen-container">
+                        <img src="${escapeHtml(producto.imagen)}" alt="${escapeHtml(producto.nombre)}" loading="lazy">
+                    </div>
+                    <div class="producto-info">
+                        <span class="producto-categoria">${escapeHtml(producto.categoria || "Producto")}</span>
+                        <h3 class="producto-nombre">${escapeHtml(producto.nombre)}</h3>
+                        <p class="producto-precio">${formatearPrecio(producto.precio)}</p>
+                        <div class="producto-actions">
+                            <div class="cantidad-control">
+                                <button type="button" onclick="cambiarCantidadProducto('${producto.id}', -1)" aria-label="Restar cantidad">-</button>
+                                <input id="qty-${producto.id}" type="number" min="1" max="99" value="1" aria-label="Cantidad">
+                                <button type="button" onclick="cambiarCantidadProducto('${producto.id}', 1)" aria-label="Sumar cantidad">+</button>
+                            </div>
+                            <button class="btn btn-primary" type="button" onclick="agregarAlCarrito('${producto.id}')">Agregar</button>
                         </div>
                     </div>
-                `;
-            });
-            
-            contenedor.innerHTML = html;
+                </article>
+            `).join("");
         }
-        
-        // Función para aplicar filtros
+
         function aplicarFiltros() {
-            const categoriaSeleccionada = document.getElementById('categoria-filtro').value;
-            const busqueda = document.getElementById('busqueda').value.toLowerCase();
-            
+            const categoriaSeleccionada = document.getElementById("categoria-filtro").value;
+            const busqueda = document.getElementById("busqueda").value.toLowerCase().trim();
             let productosFiltrados = productos;
-            
-            // Filtrar por categoría
+
             if (categoriaSeleccionada) {
-                productosFiltrados = productosFiltrados.filter(
-                    producto => producto.categoria === categoriaSeleccionada
-                );
+                productosFiltrados = productosFiltrados.filter(producto => producto.categoria === categoriaSeleccionada);
             }
-            
-            // Filtrar por búsqueda
+
             if (busqueda) {
-                productosFiltrados = productosFiltrados.filter(
-                    producto => producto.nombre.toLowerCase().includes(busqueda) || 
-                                producto.descripcion.toLowerCase().includes(busqueda)
+                productosFiltrados = productosFiltrados.filter(producto =>
+                    String(producto.nombre).toLowerCase().includes(busqueda) ||
+                    String(producto.descripcion).toLowerCase().includes(busqueda)
                 );
             }
-            
+
             mostrarProductos(productosFiltrados);
         }
 
-        // Function para formatear precios
-        function formatearPrecio(precio) {
-            const num = parseFloat(precio);
-            return num % 1 === 0 ? num.toFixed(0) : num.toFixed(2);
+        function cambiarCantidadProducto(id, cambio) {
+            const input = document.getElementById(`qty-${id}`);
+            if (!input) return;
+            const actual = parseInt(input.value, 10) || 1;
+            input.value = Math.max(1, Math.min(99, actual + cambio));
         }
-        
-        // Cargar los productos al iniciar la página
-        window.onload = cargarProductos;
-    </script
-    <!-- Botón flotante de WhatsApp -->
-    <a href="https://wa.me/5491168692888" class="whatsapp-float" target="_blank" title="Contactar por WhatsApp">
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="white">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.297-.497.1-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-    </a>
+
+        function agregarAlCarrito(id) {
+            const producto = productos.find(item => String(item.id) === String(id));
+            const input = document.getElementById(`qty-${id}`);
+            const cantidad = Math.max(1, parseInt(input ? input.value : "1", 10) || 1);
+            if (!producto) return;
+
+            const existente = carrito.find(item => String(item.id) === String(id));
+            if (existente) {
+                existente.cantidad += cantidad;
+                existente.precio = normalizarPrecio(producto.precio);
+                existente.nombre = producto.nombre;
+                existente.imagen = producto.imagen;
+            } else {
+                carrito.push({
+                    id: producto.id,
+                    nombre: producto.nombre,
+                    precio: normalizarPrecio(producto.precio),
+                    imagen: producto.imagen,
+                    cantidad
+                });
+            }
+
+            guardarCarrito();
+            abrirCarrito();
+        }
+
+        function sincronizarCarritoConProductos() {
+            carrito = carrito.map(item => {
+                const actualizado = productos.find(producto => String(producto.id) === String(item.id));
+                if (!actualizado) return item;
+                return {
+                    ...item,
+                    nombre: actualizado.nombre,
+                    precio: normalizarPrecio(actualizado.precio),
+                    imagen: actualizado.imagen
+                };
+            });
+            guardarCarrito();
+        }
+
+        function actualizarCantidadCarrito(id, cambio) {
+            const item = carrito.find(producto => String(producto.id) === String(id));
+            if (!item) return;
+            item.cantidad += cambio;
+            if (item.cantidad <= 0) {
+                carrito = carrito.filter(producto => String(producto.id) !== String(id));
+            }
+            guardarCarrito();
+        }
+
+        function quitarDelCarrito(id) {
+            carrito = carrito.filter(producto => String(producto.id) !== String(id));
+            guardarCarrito();
+        }
+
+        function vaciarCarrito() {
+            carrito = [];
+            guardarCarrito();
+        }
+
+        function obtenerTotal() {
+            return carrito.reduce((total, item) => total + item.precio * item.cantidad, 0);
+        }
+
+        function obtenerCantidadTotal() {
+            return carrito.reduce((total, item) => total + item.cantidad, 0);
+        }
+
+        function actualizarContadorCarrito() {
+            document.getElementById("cart-count").textContent = obtenerCantidadTotal();
+        }
+
+        function renderCarrito() {
+            const body = document.getElementById("cart-body");
+            const total = document.getElementById("cart-total");
+            const mercadoPagoBtn = document.getElementById("mercado-pago-btn");
+
+            total.textContent = formatearPrecio(obtenerTotal());
+            mercadoPagoBtn.hidden = !config.mercadoPagoLink;
+
+            if (carrito.length === 0) {
+                body.innerHTML = '<div class="cart-empty">Todavia no agregaste productos.</div>';
+                return;
+            }
+
+            body.innerHTML = carrito.map(item => `
+                <div class="cart-item">
+                    <img src="${escapeHtml(item.imagen)}" alt="${escapeHtml(item.nombre)}">
+                    <div>
+                        <p class="cart-item-title">${escapeHtml(item.nombre)}</p>
+                        <div class="cart-item-meta">${formatearPrecio(item.precio)} c/u - Subtotal ${formatearPrecio(item.precio * item.cantidad)}</div>
+                        <div class="cart-item-actions">
+                            <div class="mini-qty">
+                                <button type="button" onclick="actualizarCantidadCarrito('${item.id}', -1)" aria-label="Restar">-</button>
+                                <span>${item.cantidad}</span>
+                                <button type="button" onclick="actualizarCantidadCarrito('${item.id}', 1)" aria-label="Sumar">+</button>
+                            </div>
+                            <button class="remove-btn" type="button" onclick="quitarDelCarrito('${item.id}')">Quitar</button>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function abrirCarrito() {
+            document.body.classList.add("cart-open");
+            renderCarrito();
+        }
+
+        function cerrarCarrito() {
+            document.body.classList.remove("cart-open");
+        }
+
+        function armarMensajePedido() {
+            const nombre = document.getElementById("cliente-nombre").value.trim();
+            const direccion = document.getElementById("cliente-direccion").value.trim();
+            const area = document.getElementById("cliente-area").value.trim();
+            const lote = document.getElementById("cliente-lote").value.trim();
+            const notas = document.getElementById("cliente-notas").value.trim();
+            const lineas = carrito.map(item =>
+                `- ${item.cantidad} x ${item.nombre} (${formatearPrecio(item.precio)} c/u): ${formatearPrecio(item.precio * item.cantidad)}`
+            );
+
+            const mensaje = [
+                "Hola M&M Vida Saludable, quiero hacer este pedido:",
+                "",
+                ...lineas,
+                "",
+                `Total estimado: ${formatearPrecio(obtenerTotal())}`,
+                "",
+                nombre ? `Nombre: ${nombre}` : "",
+                direccion ? `Direccion: ${direccion}` : "",
+                area ? `Area/barrio/zona: ${area}` : "",
+                lote ? `Lote: ${lote}` : "",
+                notas ? `Observaciones: ${notas}` : "",
+                "",
+                "Datos de pago:",
+                `Medio: ${config.datosPago.medio}`,
+                `Titular: ${config.datosPago.titular}`,
+                `Alias: ${config.datosPago.alias}`,
+                `CVU: ${config.datosPago.cvu}`,
+                `CUIT/CUIL: ${config.datosPago.cuitCuil}`,
+                "",
+                "Entiendo que el pedido queda sujeto a disponibilidad."
+            ].filter(Boolean);
+
+            return mensaje.join("\n");
+        }
+
+        function enviarPedidoWhatsapp() {
+            if (carrito.length === 0) {
+                abrirCarrito();
+                return;
+            }
+
+            const mensaje = encodeURIComponent(armarMensajePedido());
+            window.open(`https://wa.me/${config.whatsappNumber}?text=${mensaje}`, "_blank", "noopener");
+        }
+
+        function abrirMercadoPago() {
+            if (!config.mercadoPagoLink) return;
+            window.open(config.mercadoPagoLink, "_blank", "noopener");
+        }
+
+        document.getElementById("busqueda").addEventListener("input", aplicarFiltros);
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape") cerrarCarrito();
+        });
+
+        actualizarContadorCarrito();
+        renderCarrito();
+        cargarProductos();
+    </script>
 </body>
 </html>
