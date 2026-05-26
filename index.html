@@ -67,19 +67,20 @@
         .logo-container {
             background-color: white;
             border-radius: 50%;
-            width: 120px;
-            height: 120px;
+            width: 148px;
+            height: 148px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 1.5rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border: 3px solid #e8f5e9;
+            border: 4px solid #f1f6df;
+            overflow: hidden;
         }
 
         .logo {
-            width: 85%;
-            height: 85%;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
         }
 
@@ -400,7 +401,11 @@
         .cart-body {
             flex: 1;
             overflow: auto;
-            padding: 14px 18px;
+            padding: 10px 18px 16px;
+        }
+
+        .cart-items {
+            min-height: 120px;
         }
 
         .cart-empty {
@@ -481,8 +486,9 @@
 
         .cart-footer {
             border-top: 1px solid var(--borde);
-            padding: 14px 18px 18px;
+            padding: 12px 18px 14px;
             background: #fbfcfb;
+            box-shadow: 0 -8px 20px rgba(31, 48, 35, 0.08);
         }
 
         .total-row {
@@ -492,7 +498,42 @@
             gap: 12px;
             font-weight: 900;
             font-size: 1.2rem;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+        }
+
+        .checkout-details {
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            background: #fbfcfb;
+            margin-top: 14px;
+            overflow: hidden;
+        }
+
+        .checkout-details summary {
+            cursor: pointer;
+            list-style: none;
+            color: var(--verde-oscuro);
+            font-weight: 800;
+            padding: 12px;
+        }
+
+        .checkout-details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .checkout-details summary::after {
+            content: "+";
+            float: right;
+            font-weight: 900;
+        }
+
+        .checkout-details[open] summary::after {
+            content: "-";
+        }
+
+        .checkout-content {
+            border-top: 1px solid var(--borde);
+            padding: 12px;
         }
 
         .checkout-fields {
@@ -513,7 +554,7 @@
             font-size: 0.9rem;
             line-height: 1.35;
             color: var(--muted);
-            margin: 0 0 12px;
+            margin: 0 0 10px;
         }
 
         .payment-note {
@@ -534,7 +575,13 @@
 
         .footer-actions {
             display: grid;
+            grid-template-columns: 1fr auto;
             gap: 8px;
+        }
+
+        .footer-actions .btn-outline {
+            padding-left: 12px;
+            padding-right: 12px;
         }
 
         .whatsapp-float {
@@ -593,6 +640,10 @@
                 width: 54px;
                 height: 54px;
             }
+
+            .footer-actions {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -642,41 +693,48 @@
             <h2>Tu pedido</h2>
             <button class="icon-button" type="button" onclick="cerrarCarrito()" aria-label="Cerrar carrito">x</button>
         </div>
-        <div id="cart-body" class="cart-body"></div>
+        <div class="cart-body">
+            <div id="cart-items" class="cart-items"></div>
+            <details class="checkout-details">
+                <summary>Datos de entrega y pago</summary>
+                <div class="checkout-content">
+                    <div class="checkout-fields">
+                        <label>
+                            Nombre
+                            <input id="cliente-nombre" type="text" autocomplete="name" placeholder="Tu nombre">
+                        </label>
+                        <label>
+                            Direccion
+                            <input id="cliente-direccion" type="text" autocomplete="street-address" placeholder="Calle, numero, piso/depto si corresponde">
+                        </label>
+                        <label>
+                            Area / barrio / zona
+                            <input id="cliente-area" type="text" placeholder="Ej: Nordelta, Benavidez, Villa Urquiza">
+                        </label>
+                        <label>
+                            Lote
+                            <input id="cliente-lote" type="text" placeholder="Ej: Lote 123, manzana 4">
+                        </label>
+                        <label>
+                            Observaciones
+                            <textarea id="cliente-notas" placeholder="Horarios, cambios, preferencias o consultas"></textarea>
+                        </label>
+                    </div>
+                    <p class="cart-note">El pedido se recibe por WhatsApp y queda sujeto a disponibilidad.</p>
+                    <div class="payment-note">
+                        <strong>Pago por Mercado Pago / transferencia</strong>
+                        Beatriz Carmen Pirotto<br>
+                        Alias: mymvidasaludable.mp<br>
+                        CVU: 0000003100034070333443<br>
+                        CUIT/CUIL: 27116680861
+                    </div>
+                </div>
+            </details>
+        </div>
         <div class="cart-footer">
             <div class="total-row">
                 <span>Total</span>
                 <span id="cart-total">$0</span>
-            </div>
-            <div class="checkout-fields">
-                <label>
-                    Nombre
-                    <input id="cliente-nombre" type="text" autocomplete="name" placeholder="Tu nombre">
-                </label>
-                <label>
-                    Direccion
-                    <input id="cliente-direccion" type="text" autocomplete="street-address" placeholder="Calle, numero, piso/depto si corresponde">
-                </label>
-                <label>
-                    Area / barrio / zona
-                    <input id="cliente-area" type="text" placeholder="Ej: Nordelta, Benavidez, Villa Urquiza">
-                </label>
-                <label>
-                    Lote
-                    <input id="cliente-lote" type="text" placeholder="Ej: Lote 123, manzana 4">
-                </label>
-                <label>
-                    Observaciones
-                    <textarea id="cliente-notas" placeholder="Horarios, cambios, preferencias o consultas"></textarea>
-                </label>
-            </div>
-            <p class="cart-note">El pedido se recibe por WhatsApp y queda sujeto a disponibilidad.</p>
-            <div class="payment-note">
-                <strong>Pago por Mercado Pago / transferencia</strong>
-                Beatriz Carmen Pirotto<br>
-                Alias: mymvidasaludable.mp<br>
-                CVU: 0000003100034070333443<br>
-                CUIT/CUIL: 27116680861
             </div>
             <div class="footer-actions">
                 <button class="btn btn-primary" type="button" onclick="enviarPedidoWhatsapp()">Enviar pedido por WhatsApp</button>
@@ -843,7 +901,7 @@
                         <div class="producto-actions">
                             <div class="cantidad-control">
                                 <button type="button" onclick="cambiarCantidadProducto('${producto.id}', -1)" aria-label="Restar cantidad">-</button>
-                                <input id="qty-${producto.id}" type="number" min="1" max="99" value="1" aria-label="Cantidad">
+                                <input id="qty-${producto.id}" type="number" min="0" max="99" value="0" aria-label="Cantidad">
                                 <button type="button" onclick="cambiarCantidadProducto('${producto.id}', 1)" aria-label="Sumar cantidad">+</button>
                             </div>
                             <button class="btn btn-primary" type="button" onclick="agregarAlCarrito('${producto.id}')">Agregar</button>
@@ -875,14 +933,14 @@
         function cambiarCantidadProducto(id, cambio) {
             const input = document.getElementById(`qty-${id}`);
             if (!input) return;
-            const actual = parseInt(input.value, 10) || 1;
-            input.value = Math.max(1, Math.min(99, actual + cambio));
+            const actual = parseInt(input.value, 10) || 0;
+            input.value = Math.max(0, Math.min(99, actual + cambio));
         }
 
         function agregarAlCarrito(id) {
             const producto = productos.find(item => String(item.id) === String(id));
             const input = document.getElementById(`qty-${id}`);
-            const cantidad = Math.max(1, parseInt(input ? input.value : "1", 10) || 1);
+            const cantidad = Math.max(1, parseInt(input ? input.value : "1", 10) || 0);
             if (!producto) return;
 
             const existente = carrito.find(item => String(item.id) === String(id));
@@ -902,6 +960,7 @@
             }
 
             guardarCarrito();
+            if (input) input.value = "0";
             abrirCarrito();
         }
 
@@ -952,7 +1011,7 @@
         }
 
         function renderCarrito() {
-            const body = document.getElementById("cart-body");
+            const body = document.getElementById("cart-items");
             const total = document.getElementById("cart-total");
             const mercadoPagoBtn = document.getElementById("mercado-pago-btn");
 
