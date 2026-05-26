@@ -575,8 +575,12 @@
 
         .footer-actions {
             display: grid;
-            grid-template-columns: 1fr auto;
+            grid-template-columns: 1fr 1fr;
             gap: 8px;
+        }
+
+        .footer-actions .btn-primary {
+            grid-column: 1 / -1;
         }
 
         .footer-actions .btn-outline {
@@ -738,6 +742,7 @@
             </div>
             <div class="footer-actions">
                 <button class="btn btn-primary" type="button" onclick="enviarPedidoWhatsapp()">Enviar pedido por WhatsApp</button>
+                <button class="btn btn-soft" type="button" onclick="cerrarCarrito()">Seguir comprando</button>
                 <button id="mercado-pago-btn" class="btn btn-soft" type="button" onclick="abrirMercadoPago()" hidden>Pagar con Mercado Pago</button>
                 <button class="btn btn-outline" type="button" onclick="vaciarCarrito()">Vaciar carrito</button>
             </div>
